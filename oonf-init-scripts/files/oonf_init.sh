@@ -118,3 +118,9 @@ reload()
   oonf_add_devices_to_configuration
   oonf_reread_config
 }
+
+boot() {
+  sleep 10
+  logger -t olsrd2init "boot delay"
+  start
+}
