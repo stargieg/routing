@@ -154,8 +154,8 @@ static int babeld_ubus_babeld_info(struct ubus_context *ctx_local,
   int ret;
 
   blob_buf_init(&b, 0);
-  blobmsg_add_string(&b, "babeld-version", BABELD_VERSION);
-  blobmsg_add_string(&b, "my-id", format_eui64(myid));
+  blobmsg_add_string(&b, "babeld_version", BABELD_VERSION);
+  blobmsg_add_string(&b, "my_id", format_eui64(myid));
   if (!gethostname(host, sizeof(host)))
     blobmsg_add_string(&b, "host", host);
 
@@ -217,21 +217,21 @@ static int babeld_ubus_get_xroutes(struct ubus_context *ctx_local,
     xroute_stream_done(xroutes);
   }
 
-  ipv4 = blobmsg_open_table(&b, "IPv4");
+  ipv4 = blobmsg_open_array(&b, "IPv4");
   list_for_each_entry_safe(cur, tmp, &xroute_ipv4_list, list) {
     babeld_add_xroute_buf(cur->xroute, &b);
     list_del(&cur->list);
     free(cur);
   }
-  blobmsg_close_table(&b, ipv4);
+  blobmsg_close_array(&b, ipv4);
 
-  ipv6 = blobmsg_open_table(&b, "IPv6");
+  ipv6 = blobmsg_open_array(&b, "IPv6");
   list_for_each_entry_safe(cur, tmp, &xroute_ipv6_list, list) {
     babeld_add_xroute_buf(cur->xroute, &b);
     list_del(&cur->list);
     free(cur);
   }
-  blobmsg_close_table(&b, ipv6);
+  blobmsg_close_array(&b, ipv6);
 
   ret = ubus_send_reply(ctx_local, req, b.head);
   if (ret)
@@ -305,21 +305,21 @@ static int babeld_ubus_get_routes(struct ubus_context *ctx_local,
     route_stream_done(routes);
   }
 
-  ipv4 = blobmsg_open_table(&b, "IPv4");
+  ipv4 = blobmsg_open_array(&b, "IPv4");
   list_for_each_entry_safe(cur, tmp, &route_ipv4_list, list) {
     babeld_add_route_buf(cur->route, &b);
     list_del(&cur->list);
     free(cur);
   }
-  blobmsg_close_table(&b, ipv4);
+  blobmsg_close_array(&b, ipv4);
 
-  ipv6 = blobmsg_open_table(&b, "IPv6");
+  ipv6 = blobmsg_open_array(&b, "IPv6");
   list_for_each_entry_safe(cur, tmp, &route_ipv6_list, list) {
     babeld_add_route_buf(cur->route, &b);
     list_del(&cur->list);
     free(cur);
   }
-  blobmsg_close_table(&b, ipv6);
+  blobmsg_close_array(&b, ipv6);
 
   ret = ubus_send_reply(ctx_local, req, b.head);
   if (ret)
@@ -338,8 +338,8 @@ static void babeld_add_neighbour_buf(struct neighbour *neigh,
   neighbour = blobmsg_open_table(b, NULL);
   blobmsg_add_string(b, "address", format_address(neigh->address));
   blobmsg_add_string(b, "dev", neigh->ifp->name);
-  blobmsg_add_u32(b, "hello-reach", neigh->hello.reach);
-  blobmsg_add_u32(b, "uhello-reach", neigh->uhello.reach);
+  blobmsg_add_u32(b, "hello_reach", neigh->hello.reach);
+  blobmsg_add_u32(b, "uhello_reach", neigh->uhello.reach);
   blobmsg_add_u32(b, "rxcost", neighbour_rxcost(neigh));
   blobmsg_add_u32(b, "txcost", neigh->txcost);
   blobmsg_add_string(b, "rtt", format_thousands(neigh->rtt));
@@ -375,21 +375,21 @@ static int babeld_ubus_get_neighbours(struct ubus_context *ctx_local,
     }
   }
 
-  ipv4 = blobmsg_open_table(&b, "IPv4");
+  ipv4 = blobmsg_open_array(&b, "IPv4");
   list_for_each_entry_safe(cur, tmp, &neighbour_ipv4_list, list) {
     babeld_add_neighbour_buf(cur->neighbour, &b);
     list_del(&cur->list);
     free(cur);
   }
-  blobmsg_close_table(&b, ipv4);
+  blobmsg_close_array(&b, ipv4);
 
-  ipv6 = blobmsg_open_table(&b, "IPv6");
+  ipv6 = blobmsg_open_array(&b, "IPv6");
   list_for_each_entry_safe(cur, tmp, &neighbour_ipv6_list, list) {
     babeld_add_neighbour_buf(cur->neighbour, &b);
     list_del(&cur->list);
     free(cur);
   }
-  blobmsg_close_table(&b, ipv6);
+  blobmsg_close_array(&b, ipv6);
 
   ret = ubus_send_reply(ctx_local, req, b.head);
   if (ret)
