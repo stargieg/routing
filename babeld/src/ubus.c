@@ -172,9 +172,10 @@ static int babeld_ubus_babeld_info(struct ubus_context *ctx_local,
 static void babeld_add_xroute_buf(struct xroute *xroute, struct blob_buf *b) {
   void *prefix;
 
-  prefix = blobmsg_open_table(b, format_prefix(xroute->prefix, xroute->plen));
-
-  blobmsg_add_string(b, "src-prefix",
+  prefix = blobmsg_open_table(b, NULL);
+  blobmsg_add_string(b, "address",
+                      format_prefix(xroute->prefix, xroute->plen));
+  blobmsg_add_string(b, "src_prefix",
                      format_prefix(xroute->src_prefix, xroute->src_plen));
   blobmsg_add_u32(b, "metric", xroute->metric);
   blobmsg_close_table(b, prefix);
@@ -247,10 +248,12 @@ static void babeld_add_route_buf(struct babel_route *route,
   void *prefix;
 
   prefix = blobmsg_open_table(
-      b, format_prefix(route->src->prefix, route->src->plen));
-
+      b, NULL);
   blobmsg_add_string(
-      b, "src-prefix",
+      b, "address",
+      format_prefix(route->src->prefix, route->src->plen));
+  blobmsg_add_string(
+      b, "src_prefix",
       format_prefix(route->src->src_prefix, route->src->src_plen));
   blobmsg_add_u32(b, "route_metric", route_metric(route));
   blobmsg_add_u32(b, "route_smoothed_metric", route_smoothed_metric(route));
@@ -332,7 +335,8 @@ static void babeld_add_neighbour_buf(struct neighbour *neigh,
                                      struct blob_buf *b) {
   void *neighbour;
 
-  neighbour = blobmsg_open_table(b, format_address(neigh->address));
+  neighbour = blobmsg_open_table(b, NULL);
+  blobmsg_add_string(b, "address", format_address(neigh->address));
   blobmsg_add_string(b, "dev", neigh->ifp->name);
   blobmsg_add_u32(b, "hello-reach", neigh->hello.reach);
   blobmsg_add_u32(b, "uhello-reach", neigh->uhello.reach);
